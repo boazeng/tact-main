@@ -1,0 +1,254 @@
+/* עמוד הבית של TACT — סגנון מבוסס על שפת העיצוב של הקבוצה */
+
+/* ---- page shell: footer always sticks to the bottom ---- */
+.home-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.home-bar-tag {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+  font-weight: 500;
+  border-right: 1px solid var(--color-border);
+  padding-right: 18px;
+}
+
+/* ---- header actions / edit button ---- */
+.home-bar-actions {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.home-btn-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: var(--font-size-sm);
+}
+
+.home-main { flex: 1; padding-bottom: 40px; }
+
+/* ---- hero ---- */
+.home-hero {
+  text-align: center;
+  padding: 40px 0 32px;
+}
+.home-hero-kicker { display: inline-block; margin-bottom: 14px; }
+.home-hero-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+}
+.home-hero-sub {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-light);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ---- categories ---- */
+.home-cat { margin-bottom: 36px; }
+.home-cat-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--color-border);
+}
+
+/* ---- grid of app cards: exactly 3 per row ---- */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 760px) {
+  .home-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 500px) {
+  .home-grid { grid-template-columns: 1fr; }
+}
+
+.home-card { display: block; color: inherit; }
+
+/* כרטיס קומפקטי יותר */
+.home-card .tact-card-cap { padding: 12px 14px; }
+.home-card .tact-card-body { padding: 12px 14px 14px; }
+.home-card .tact-card-ico { width: 28px; height: 28px; border-radius: 8px; }
+
+/* "בקרוב" — לא לחיץ, מעט דהוי, ללא הרמה בהובר */
+.home-card.is-soon { cursor: default; opacity: 0.72; }
+.home-card.is-soon:hover {
+  transform: none;
+  box-shadow: 0 8px 22px rgba(28, 27, 25, 0.09);
+}
+.home-card.is-soon .home-card-go { color: var(--color-text-light); }
+
+.home-card-name {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+.home-card-desc {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--color-text-light);
+  min-height: 34px;
+  margin-bottom: 12px;
+}
+.home-card-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  transition: gap .18s;
+}
+.home-card:hover .home-card-go { gap: 11px; }
+
+/* ---- footer ---- */
+.home-foot-text {
+  font-size: var(--font-size-sm);
+  margin-inline-start: auto;
+}
+
+@media (max-width: 600px) {
+  .home-hero { padding: 40px 0 32px; }
+  .home-hero-title { font-size: var(--font-size-2xl); }
+}
+
+/* ================= EDIT MODE ================= */
+.home-edit-note {
+  margin-top: 14px;
+  display: inline-block;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-accent);
+  background: rgba(214, 74, 46, 0.10);
+  padding: 6px 16px;
+  border-radius: 999px;
+}
+
+/* editable category title */
+.home-cat-title-edit {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 360px;
+}
+
+/* shared editable field look */
+.home-edit-field {
+  width: 100%;
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-bottom: 8px;
+  resize: vertical;
+}
+.home-edit-field:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+.home-edit-name { font-size: var(--font-size-lg); font-weight: 700; color: var(--color-primary); }
+.home-edit-desc { font-size: 0.85rem; line-height: 1.45; }
+.home-edit-url  { font-size: 0.8rem; font-family: var(--font-family-en); }
+
+/* status select in the cap */
+.home-edit-status {
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid var(--t-bd, var(--color-border));
+  border-radius: 999px;
+  padding: 3px 10px;
+  background: var(--color-bg-white);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+/* card stays put in edit mode (no hover lift) */
+.home-card.is-editing { cursor: default; }
+.home-card.is-editing:hover {
+  transform: none;
+  box-shadow: 0 8px 22px rgba(28, 27, 25, 0.09);
+}
+
+/* per-card toolbar */
+.home-edit-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--color-border);
+}
+.home-edit-toolbar button {
+  font: inherit;
+  font-size: 0.95rem;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-white);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all .15s;
+}
+.home-edit-toolbar button:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.home-edit-toolbar button:disabled { opacity: 0.35; cursor: not-allowed; }
+.home-edit-toolbar .home-edit-del:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.home-edit-movecat {
+  flex: 1;
+  font: inherit;
+  font-size: 0.78rem;
+  height: 30px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-white);
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+/* add-card tile */
+.home-add-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 150px;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-light);
+  background: transparent;
+  border: 2px dashed var(--color-border);
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all .18s;
+}
+.home-add-card:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
