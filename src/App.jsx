@@ -142,6 +142,16 @@ export default function App() {
       setData((prev) => prev.map((c, i) =>
         i !== ci ? c : { ...c, apps: [...c.apps, { name: 'אפליקציה חדשה', desc: '', url: '', icon: 'package', tone: 'steel', status: 'soon' }] }))
     },
+    addCategory() {
+      setData((prev) => [...prev, { title: 'קטגוריה חדשה', apps: [] }])
+    },
+    removeCategory(ci) {
+      setData((prev) => {
+        const cat = prev[ci]
+        if (cat.apps.length > 0 && !confirm(`למחוק את הקטגוריה "${cat.title}" ואת ${cat.apps.length} האפליקציות שבה?`)) return prev
+        return prev.filter((_, i) => i !== ci)
+      })
+    },
     reset() {
       if (confirm('לאפס את כל השינויים ולחזור לברירת המחדל?')) {
         setData(JSON.parse(JSON.stringify(defaultCategories)))
@@ -179,11 +189,16 @@ export default function App() {
         {data.map((cat, ci) => (
           <section key={ci} className="home-cat">
             {editMode ? (
-              <input
-                className="home-edit-field home-cat-title-edit"
-                value={cat.title}
-                onChange={(e) => actions.catTitle(ci, e.target.value)}
-              />
+              <div className="home-cat-head">
+                <input
+                  className="home-edit-field home-cat-title-edit"
+                  value={cat.title}
+                  onChange={(e) => actions.catTitle(ci, e.target.value)}
+                />
+                <button className="home-cat-del" title="מחק קטגוריה" onClick={() => actions.removeCategory(ci)}>
+                  🗑 מחק קטגוריה
+                </button>
+              </div>
             ) : (
               <h2 className="home-cat-title">{cat.title}</h2>
             )}
@@ -212,6 +227,13 @@ export default function App() {
             </div>
           </section>
         ))}
+
+        {editMode && (
+          <button className="home-add-cat" onClick={actions.addCategory}>
+            <TactIcon name="plus" size={20} />
+            הוסף קטגוריה
+          </button>
+        )}
       </main>
 
       <footer className="tact-footer">

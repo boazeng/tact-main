@@ -138,14 +138,56 @@
   border-radius: 999px;
 }
 
-/* editable category title */
+/* editable category header (title + delete) */
+.home-cat-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
 .home-cat-title-edit {
   font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--color-primary);
-  margin-bottom: 16px;
+  margin-bottom: 0;
   width: 100%;
   max-width: 360px;
+}
+.home-cat-del {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-text-light);
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.home-cat-del:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+/* add-category button */
+.home-add-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border: 2px dashed var(--color-border);
+  border-radius: 14px;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: all .18s;
+}
+.home-add-cat:hover {
+  border-color: var(--color-primary);
+  background: rgba(31, 58, 95, 0.12);
+  transform: translateY(-2px);
 }
 
 /* shared editable field look */
