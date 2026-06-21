@@ -6,10 +6,20 @@ import { categories as defaultCategories, STATUS } from './apps'
 
 const STORAGE_KEY = 'tact-apps-v1'
 
+// Bump this whenever src/apps.js changes, so every browser drops its cached
+// localStorage copy and re-seeds from the new defaults (otherwise old saved
+// data shadows the update — e.g. hides newly added logos).
+const DEFAULTS_VERSION = 2
+
 function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return JSON.parse(raw)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (parsed && parsed.v === DEFAULTS_VERSION && Array.isArray(parsed.data)) {
+        return parsed.data
+      }
+    }
   } catch (e) { /* ignore corrupt storage */ }
   return JSON.parse(JSON.stringify(defaultCategories))
 }
@@ -119,7 +129,7 @@ export default function App() {
   const [editMode, setEditMode] = useState(false)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ v: DEFAULTS_VERSION, data }))
   }, [data])
 
   const allTitles = data.map((c) => c.title)
