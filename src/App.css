@@ -67,7 +67,7 @@
 .home-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 12px;
 }
 @media (max-width: 760px) {
   .home-grid { grid-template-columns: repeat(2, 1fr); }
@@ -78,10 +78,31 @@
 
 .home-card { display: block; color: inherit; }
 
-/* כרטיס קומפקטי יותר */
-.home-card .tact-card-cap { padding: 12px 14px; }
-.home-card .tact-card-body { padding: 12px 14px 14px; }
-.home-card .tact-card-ico { width: 28px; height: 28px; border-radius: 8px; }
+/* כרטיס קומפקטי */
+.home-card { border-radius: 14px; }
+.home-card .tact-card-cap { padding: 9px 12px; }
+.home-card .tact-card-body { padding: 10px 12px 12px; }
+.home-card .tact-card-ico { width: 26px; height: 26px; border-radius: 7px; }
+
+/* ---- logo chip (real favicon) ---- */
+.tact-card-ico.has-logo {
+  background: #fff;
+  border: 1px solid var(--t-bd, var(--color-border));
+  padding: 3px;
+}
+.tact-card-ico.has-logo img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.tact-card-ico.has-logo .ico-fallback { display: none; }
+/* if the logo image fails to load, hide it and show the line-icon fallback */
+.tact-card-ico.has-logo.logo-failed { background: var(--color-ink); padding: 0; border: none; }
+.tact-card-ico.has-logo.logo-failed img { display: none; }
+.tact-card-ico.has-logo.logo-failed .ico-fallback {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; color: #8FC9A6;
+}
 
 /* "בקרוב" — לא לחיץ, מעט דהוי, ללא הרמה בהובר */
 .home-card.is-soon { cursor: default; opacity: 0.72; }
@@ -92,23 +113,23 @@
 .home-card.is-soon .home-card-go { color: var(--color-text-light); }
 
 .home-card-name {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   font-weight: 700;
   color: var(--color-primary);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 .home-card-desc {
-  font-size: 0.8rem;
-  line-height: 1.45;
+  font-size: 0.76rem;
+  line-height: 1.4;
   color: var(--color-text-light);
-  min-height: 34px;
-  margin-bottom: 12px;
+  min-height: 30px;
+  margin-bottom: 10px;
 }
 .home-card-go {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.82rem;
+  gap: 5px;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--color-accent);
   transition: gap .18s;

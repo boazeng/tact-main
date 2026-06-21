@@ -14,6 +14,23 @@ function loadData() {
   return JSON.parse(JSON.stringify(defaultCategories))
 }
 
+/* ---------- icon chip: real logo if present, else line icon ---------- */
+function AppIcon({ app }) {
+  if (app.logo) {
+    return (
+      <span className="tact-card-ico has-logo">
+        <img
+          src={app.logo}
+          alt=""
+          onError={(e) => { e.currentTarget.parentElement.classList.add('logo-failed') }}
+        />
+        <span className="ico-fallback"><TactIcon name={app.icon} size={20} /></span>
+      </span>
+    )
+  }
+  return <span className="tact-card-ico"><TactIcon name={app.icon} size={20} /></span>
+}
+
 /* ---------- view card (read-only) ---------- */
 function AppCard({ app }) {
   const st = STATUS[app.status] || STATUS.soon
@@ -24,7 +41,7 @@ function AppCard({ app }) {
   return (
     <Tag className={`tact-card home-card tone-${app.tone}${app.url ? '' : ' is-soon'}`} {...linkProps}>
       <div className="tact-card-cap">
-        <span className="tact-card-ico"><TactIcon name={app.icon} size={20} /></span>
+        <AppIcon app={app} />
         <span className={`tact-badge ${st.cls}`}>{st.label}</span>
       </div>
       <div className="tact-card-body">
@@ -44,7 +61,7 @@ function EditCard({ app, ci, ai, catCount, allTitles, actions }) {
   return (
     <div className={`tact-card home-card tone-${app.tone} is-editing`}>
       <div className="tact-card-cap">
-        <span className="tact-card-ico"><TactIcon name={app.icon} size={20} /></span>
+        <AppIcon app={app} />
         <select
           className="home-edit-status"
           value={app.status}

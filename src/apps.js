@@ -6,6 +6,8 @@
      url    — כתובת מלאה (https / http://localhost:PORT). ריק ('') = "בקרוב", לא לחיץ.
      icon   — אייקון מתוך TactIcon (clients, database, briefcase, chat, trending,
               workflow, package, document, dashboard, server, globe ...)
+     logo   — (אופציונלי) נתיב ללוגו/favicon אמיתי של האפליקציה (למשל
+              '/icons/customer.svg'). אם מוגדר — מוצג במקום ה-icon. הקבצים ב-public/icons.
      tone   — גוון הכרטיס: 'steel' | 'blue' | 'green'
      status — 'live' (חי) | 'local' (מקומי) | 'soon' (בקרוב)
 */
@@ -26,6 +28,7 @@ export const categories = [
         desc: 'קליטה ועיבוד של חשבוניות ספקים',
         url: 'https://bookkeeping.newavera.co.il/',
         icon: 'invoices',
+        logo: '/icons/bookkeeping.ico',
         tone: 'steel',
         status: 'live',
       },
@@ -34,6 +37,7 @@ export const categories = [
         desc: 'מעקב תזרים מזומנים וניהול פרויקטים',
         url: 'https://flow.newavera.co.il/',
         icon: 'trending',
+        logo: '/icons/flow.svg',
         tone: 'blue',
         status: 'live',
       },
@@ -47,6 +51,7 @@ export const categories = [
         desc: 'חשבוניות וכרטסת ללקוחות מתוך Priority',
         url: 'https://customer.newavera.co.il',
         icon: 'clients',
+        logo: '/icons/customer.svg',
         tone: 'steel',
         status: 'live',
       },
@@ -60,6 +65,7 @@ export const categories = [
         desc: 'ניהול תזרים מזומנים ופרויקטים',
         url: 'https://d1imdunndmflnu.cloudfront.net/ariel/hr',
         icon: 'trending',
+        logo: '/icons/urban.svg',
         tone: 'steel',
         status: 'live',
       },
@@ -73,6 +79,7 @@ export const categories = [
         desc: 'הזמנת ברזל וחישוב משקלים מתוך קטלוג צורות',
         url: 'https://irondraw.newavera.co.il/',
         icon: 'package',
+        logo: '/icons/irondraw.png',
         tone: 'blue',
         status: 'live',
       },
@@ -102,6 +109,7 @@ export const categories = [
         desc: 'מערכת CRM רב-דיירית לניהול לקוחות הקבוצה',
         url: 'https://crm-db.newavera.co.il',
         icon: 'briefcase',
+        logo: '/icons/crm.svg',
         tone: 'green',
         status: 'live',
       },
