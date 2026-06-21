@@ -1,0 +1,6 @@
+# Treat icon binaries as binary so autocrlf never rewrites them
+*.ico binary
+*.png binary
+*.jpg binary
+*.woff binary
+*.woff2 binary
