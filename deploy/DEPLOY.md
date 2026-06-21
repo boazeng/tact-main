@@ -10,7 +10,7 @@
 |-------|-----|
 | Repo | github.com/boazeng/tact-main |
 | תיקייה | `~/server/tact-main` |
-| **פורט** | **8096** (ה-container מאזין על 80) |
+| **פורט** | **8099** (ה-container מאזין על 80) |
 | תת-דומיין | `tact-main.newavera.co.il` |
 | Container | `tact-main` |
 | סודות | **אין** — אתר סטטי ציבורי |
@@ -23,7 +23,7 @@ git clone https://github.com/boazeng/tact-main.git tact-main
 cd tact-main
 
 ~/.orbstack/bin/docker compose up -d --build
-curl -s -o /dev/null -w "local=%{http_code}\n" http://127.0.0.1:8096/healthz   # 200
+curl -s -o /dev/null -w "local=%{http_code}\n" http://127.0.0.1:8099/healthz   # 200
 ```
 
 ## Cloudflare Tunnel + DNS
@@ -31,7 +31,7 @@ curl -s -o /dev/null -w "local=%{http_code}\n" http://127.0.0.1:8096/healthz   #
 1. `~/.cloudflared/config.yml` — הוסף **מעל** ה-catch-all 404:
    ```yaml
      - hostname: tact-main.newavera.co.il
-       service: http://localhost:8096
+       service: http://localhost:8099
    ```
    ולדציה:
    ```bash
