@@ -4,27 +4,18 @@ import TactLogo from './components/TactLogo'
 import TactIcon from './components/TactIcon'
 import { categories as defaultCategories, STATUS } from './apps'
 
+// Stale key from the old per-device localStorage model — cleared on load so it
+// can never shadow the shared list again.
 const STORAGE_KEY = 'tact-apps-v1'
 
 // Visible build tag (shown in the footer) — lets us confirm at a glance which
 // build a given machine is actually running. Bump on each deploy.
-const BUILD = 'build 7 · 2026-06-22'
+const BUILD = 'build 8 · 2026-06-22'
 
-// Bump this whenever src/apps.js changes, so every browser drops its cached
-// localStorage copy and re-seeds from the new defaults (otherwise old saved
-// data shadows the update — e.g. hides newly added logos).
-const DEFAULTS_VERSION = 2
-
+// src/apps.js is now the SINGLE SOURCE OF TRUTH — every visitor sees exactly
+// the same list. Edit mode is a local preview only; to make a change permanent
+// for everyone, use "ייצוא" and the JSON gets baked into apps.js.
 function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) {
-      const parsed = JSON.parse(raw)
-      if (parsed && parsed.v === DEFAULTS_VERSION && Array.isArray(parsed.data)) {
-        return parsed.data
-      }
-    }
-  } catch (e) { /* ignore corrupt storage */ }
   return JSON.parse(JSON.stringify(defaultCategories))
 }
 
@@ -132,9 +123,11 @@ export default function App() {
   const [data, setData] = useState(loadData)
   const [editMode, setEditMode] = useState(false)
 
+  // One-time cleanup: drop any old per-device data so it can't shadow the
+  // shared list. The site now always renders from apps.js.
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ v: DEFAULTS_VERSION, data }))
-  }, [data])
+    try { localStorage.removeItem(STORAGE_KEY) } catch (e) { /* ignore */ }
+  }, [])
 
   const allTitles = data.map((c) => c.title)
 
@@ -184,8 +177,18 @@ export default function App() {
       })
     },
     reset() {
-      if (confirm('לאפס את כל השינויים ולחזור לברירת המחדל?')) {
+      if (confirm('לאפס את כל השינויים ולחזור לרשימה המשותפת?')) {
         setData(JSON.parse(JSON.stringify(defaultCategories)))
+      }
+    },
+    async exportJson() {
+      const json = JSON.stringify(data, null, 2)
+      try {
+        await navigator.clipboard.writeText(json)
+        alert('הרשימה הועתקה ללוח ✓\nהדבק אותה לבועז (Claude) כדי להפוך אותה לגרסה הקבועה לכולם.')
+      } catch (e) {
+        // clipboard blocked — show it so the user can copy manually
+        window.prompt('העתק את ה-JSON ושלח כדי לקבע לכולם:', json)
       }
     },
   }
@@ -197,7 +200,12 @@ export default function App() {
         <span className="home-bar-tag">מרכז האפליקציות</span>
         <div className="home-bar-actions">
           {editMode && (
-            <button className="tact-btn tact-btn-ghost home-btn-sm" onClick={actions.reset}>אפס</button>
+            <>
+              <button className="tact-btn tact-btn-ghost home-btn-sm" onClick={actions.reset}>אפס</button>
+              <button className="tact-btn tact-btn-ghost home-btn-sm" onClick={actions.exportJson}>
+                <TactIcon name="swap" size={16} /> ייצוא
+              </button>
+            </>
           )}
           <button
             className={`tact-btn home-btn-sm ${editMode ? 'tact-btn-primary' : 'tact-btn-ghost'}`}
@@ -214,7 +222,7 @@ export default function App() {
           <span className="tact-badge tact-badge-new home-hero-kicker">כל המערכות במקום אחד</span>
           <h1 className="home-hero-title">האפליקציות של TACT</h1>
           <p className="home-hero-sub">שער הכניסה למערכות הקבוצה — בחרו אפליקציה כדי לעבור אליה.</p>
-          {editMode && <p className="home-edit-note">מצב עריכה — השינויים נשמרים אוטומטית במכשיר זה</p>}
+          {editMode && <p className="home-edit-note">מצב עריכה — תצוגה מקדימה במכשיר זה בלבד. לקיבוע לכולם: לחצו "ייצוא" ושלחו לי את ה-JSON</p>}
         </section>
 
         {data.map((cat, ci) => (
