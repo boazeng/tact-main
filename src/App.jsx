@@ -10,7 +10,7 @@ const STORAGE_KEY = 'tact-apps-v1'
 
 // Visible build tag (shown in the footer) — lets us confirm at a glance which
 // build a given machine is actually running. Bump on each deploy.
-const BUILD = 'build 8 · 2026-06-22'
+const BUILD = 'build 9 · 2026-06-22'
 
 // src/apps.js is now the SINGLE SOURCE OF TRUTH — every visitor sees exactly
 // the same list. Edit mode is a local preview only; to make a change permanent
@@ -122,11 +122,24 @@ function EditCard({ app, ci, ai, catCount, allTitles, actions }) {
 export default function App() {
   const [data, setData] = useState(loadData)
   const [editMode, setEditMode] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [saving, setSaving] = useState(false)
 
-  // One-time cleanup: drop any old per-device data so it can't shadow the
-  // shared list. The site now always renders from apps.js.
+  // On load: drop any legacy per-device localStorage, pull the SHARED config
+  // from the server (so everyone sees the same list), and learn if the viewer
+  // is an admin (only admins may edit/save).
   useEffect(() => {
     try { localStorage.removeItem(STORAGE_KEY) } catch (e) { /* ignore */ }
+
+    fetch('/api/config')
+      .then((r) => r.json())
+      .then((d) => { if (d && Array.isArray(d.config)) setData(d.config) })
+      .catch(() => { /* offline / no backend → keep bundled defaults */ })
+
+    fetch('/auth/me')
+      .then((r) => r.json())
+      .then((u) => { if (u && u.role === 'admin') setIsAdmin(true) })
+      .catch(() => { /* not logged in */ })
   }, [])
 
   const allTitles = data.map((c) => c.title)
@@ -177,18 +190,36 @@ export default function App() {
       })
     },
     reset() {
-      if (confirm('לאפס את כל השינויים ולחזור לרשימה המשותפת?')) {
-        setData(JSON.parse(JSON.stringify(defaultCategories)))
+      if (confirm('לבטל את השינויים ולחזור לרשימה השמורה בשרת?')) {
+        fetch('/api/config')
+          .then((r) => r.json())
+          .then((d) => setData(Array.isArray(d.config) ? d.config : JSON.parse(JSON.stringify(defaultCategories))))
+          .catch(() => setData(JSON.parse(JSON.stringify(defaultCategories))))
       }
     },
-    async exportJson() {
-      const json = JSON.stringify(data, null, 2)
+    async save() {
+      setSaving(true)
       try {
-        await navigator.clipboard.writeText(json)
-        alert('הרשימה הועתקה ללוח ✓\nהדבק אותה לבועז (Claude) כדי להפוך אותה לגרסה הקבועה לכולם.')
+        const r = await fetch('/api/config', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ config: data }),
+        })
+        if (r.ok) {
+          alert('נשמר ✓ — כל מי שייכנס מעכשיו יראה את העדכון.')
+          setEditMode(false)
+        } else if (r.status === 401) {
+          alert('צריך להתחבר כדי לשמור. מעביר להתחברות…')
+          window.location.href = '/login'
+        } else if (r.status === 403) {
+          alert('אין לך הרשאת עריכה (רק מנהל יכול לשמור).')
+        } else {
+          alert('השמירה נכשלה. נסה שוב.')
+        }
       } catch (e) {
-        // clipboard blocked — show it so the user can copy manually
-        window.prompt('העתק את ה-JSON ושלח כדי לקבע לכולם:', json)
+        alert('השמירה נכשלה (בעיית רשת). נסה שוב.')
+      } finally {
+        setSaving(false)
       }
     },
   }
@@ -201,19 +232,21 @@ export default function App() {
         <div className="home-bar-actions">
           {editMode && (
             <>
-              <button className="tact-btn tact-btn-ghost home-btn-sm" onClick={actions.reset}>אפס</button>
-              <button className="tact-btn tact-btn-ghost home-btn-sm" onClick={actions.exportJson}>
-                <TactIcon name="swap" size={16} /> ייצוא
+              <button className="tact-btn tact-btn-ghost home-btn-sm" onClick={actions.reset} disabled={saving}>בטל</button>
+              <button className="tact-btn tact-btn-primary home-btn-sm" onClick={actions.save} disabled={saving}>
+                <TactIcon name="plus" size={16} /> {saving ? 'שומר…' : 'שמור לכולם'}
               </button>
             </>
           )}
-          <button
-            className={`tact-btn home-btn-sm ${editMode ? 'tact-btn-primary' : 'tact-btn-ghost'}`}
-            onClick={() => setEditMode((v) => !v)}
-          >
-            <TactIcon name={editMode ? 'target' : 'document'} size={16} />
-            {editMode ? 'סיום עריכה' : 'ערוך'}
-          </button>
+          {isAdmin && (
+            <button
+              className={`tact-btn home-btn-sm ${editMode ? 'tact-btn-ghost' : 'tact-btn-ghost'}`}
+              onClick={() => setEditMode((v) => !v)}
+            >
+              <TactIcon name={editMode ? 'target' : 'document'} size={16} />
+              {editMode ? 'סיום עריכה' : 'ערוך'}
+            </button>
+          )}
         </div>
       </header>
 
@@ -222,7 +255,7 @@ export default function App() {
           <span className="tact-badge tact-badge-new home-hero-kicker">כל המערכות במקום אחד</span>
           <h1 className="home-hero-title">האפליקציות של TACT</h1>
           <p className="home-hero-sub">שער הכניסה למערכות הקבוצה — בחרו אפליקציה כדי לעבור אליה.</p>
-          {editMode && <p className="home-edit-note">מצב עריכה — תצוגה מקדימה במכשיר זה בלבד. לקיבוע לכולם: לחצו "ייצוא" ושלחו לי את ה-JSON</p>}
+          {editMode && <p className="home-edit-note">מצב עריכה — לחצו "שמור לכולם" כדי לעדכן את כל מי שנכנס</p>}
         </section>
 
         {data.map((cat, ci) => (
@@ -277,7 +310,13 @@ export default function App() {
 
       <footer className="tact-footer">
         <TactLogo tone="dark" word="group" size={0.85} />
-        <span className="home-foot-text">© {new Date().getFullYear()} TACT · יזמות טכנולוגית · <span className="home-build">{BUILD}</span></span>
+        <span className="home-foot-text">
+          © {new Date().getFullYear()} TACT · יזמות טכנולוגית · <span className="home-build">{BUILD}</span>
+          {' · '}
+          {isAdmin
+            ? <a className="home-foot-link" href="/logout">התנתק</a>
+            : <a className="home-foot-link" href="/login">כניסת מנהל</a>}
+        </span>
       </footer>
     </div>
   )

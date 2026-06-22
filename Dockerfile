@@ -1,7 +1,7 @@
-# TACT portal — build the static Vite SPA, then serve it with nginx.
-# Pure static site: no backend, no secrets.
+# TACT portal — build the static Vite SPA, then serve it from FastAPI
+# (which also stores the shared config and runs Google sign-in).
 
-# ---- stage 1: build ----
+# ---- stage 1: build the static frontend ----
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -9,8 +9,15 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# ---- stage 2: serve ----
-FROM nginx:alpine
-COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
+# ---- stage 2: FastAPI app server ----
+FROM python:3.12-slim
+WORKDIR /app
+# git is needed to pip-install shared-auth from GitHub
+RUN apt-get update && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/ ./backend/
+COPY --from=build /app/dist ./dist
+EXPOSE 8000
+CMD ["uvicorn", "backend.server:app", "--host", "0.0.0.0", "--port", "8000"]

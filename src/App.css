@@ -141,6 +141,13 @@
   font-size: var(--font-size-sm);
   margin-inline-start: auto;
 }
+.home-foot-link {
+  color: var(--color-text-white);
+  text-decoration: underline;
+  opacity: 0.85;
+}
+.home-foot-link:hover { opacity: 1; }
+.home-build { opacity: 0.7; }
 
 @media (max-width: 600px) {
   .home-hero { padding: 40px 0 32px; }
