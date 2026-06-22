@@ -6,6 +6,10 @@ import { categories as defaultCategories, STATUS } from './apps'
 
 const STORAGE_KEY = 'tact-apps-v1'
 
+// Visible build tag (shown in the footer) — lets us confirm at a glance which
+// build a given machine is actually running. Bump on each deploy.
+const BUILD = 'build 7 · 2026-06-22'
+
 // Bump this whenever src/apps.js changes, so every browser drops its cached
 // localStorage copy and re-seeds from the new defaults (otherwise old saved
 // data shadows the update — e.g. hides newly added logos).
@@ -265,7 +269,7 @@ export default function App() {
 
       <footer className="tact-footer">
         <TactLogo tone="dark" word="group" size={0.85} />
-        <span className="home-foot-text">© {new Date().getFullYear()} TACT · יזמות טכנולוגית</span>
+        <span className="home-foot-text">© {new Date().getFullYear()} TACT · יזמות טכנולוגית · <span className="home-build">{BUILD}</span></span>
       </footer>
     </div>
   )
