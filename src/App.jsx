@@ -10,7 +10,7 @@ const STORAGE_KEY = 'tact-apps-v1'
 
 // Visible build tag (shown in the footer) — lets us confirm at a glance which
 // build a given machine is actually running. Bump on each deploy.
-const BUILD = 'build 9 · 2026-06-22'
+const BUILD = 'build 10 · 2026-06-25'
 
 // src/apps.js is now the SINGLE SOURCE OF TRUTH — every visitor sees exactly
 // the same list. Edit mode is a local preview only; to make a change permanent
@@ -182,6 +182,15 @@ export default function App() {
     addCategory() {
       setData((prev) => [...prev, { title: 'קטגוריה חדשה', apps: [] }])
     },
+    moveCategory(ci, dir) {
+      setData((prev) => {
+        const ni = ci + dir
+        if (ni < 0 || ni >= prev.length) return prev
+        const next = [...prev]
+        ;[next[ci], next[ni]] = [next[ni], next[ci]]
+        return next
+      })
+    },
     removeCategory(ci) {
       setData((prev) => {
         const cat = prev[ci]
@@ -267,6 +276,10 @@ export default function App() {
                   value={cat.title}
                   onChange={(e) => actions.catTitle(ci, e.target.value)}
                 />
+                <button className="home-cat-move" title="הזז קטגוריה למעלה"
+                  onClick={() => actions.moveCategory(ci, -1)} disabled={ci === 0}>↑</button>
+                <button className="home-cat-move" title="הזז קטגוריה למטה"
+                  onClick={() => actions.moveCategory(ci, +1)} disabled={ci === data.length - 1}>↓</button>
                 <button className="home-cat-del" title="מחק קטגוריה" onClick={() => actions.removeCategory(ci)}>
                   🗑 מחק קטגוריה
                 </button>

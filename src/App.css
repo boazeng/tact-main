@@ -195,6 +195,20 @@
   transition: all .15s;
 }
 .home-cat-del:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.home-cat-move {
+  font: inherit;
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-white);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all .15s;
+}
+.home-cat-move:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-primary); }
+.home-cat-move:disabled { opacity: 0.35; cursor: not-allowed; }
 
 /* add-category button */
 .home-add-cat {
